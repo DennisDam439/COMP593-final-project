@@ -113,7 +113,7 @@ def set_desktop_background_image(image_path):
         bool: True, if successful. False, if unsuccessful        
     """
     try:
-        if os.name == 'nt':  # For Windows
+        if os.name == 'nt':
             SPI_SETDESKWALLPAPER = 20
             ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image_path, 3)
             return True
