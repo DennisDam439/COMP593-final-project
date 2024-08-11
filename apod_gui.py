@@ -121,18 +121,22 @@ class APODApp:
     def loadimages_display(self, title):
         try:
             apod_info = apod_desktop.get_apod_info_by_title(title)
-            logging.debug(f"APOD Info for {title}: {apod_info}")
             if apod_info:
                 file_path = apod_info.get('file_path')
-                logging.debug(f"File path: {file_path}")
                 if file_path and os.path.exists(file_path):
                     try:
                         image = Image.open(file_path)
-                        width, height = self.image_label.winfo_width(), self.image_label.winfo_height()
-                        if width == 0 or height == 0:
-                            width, height = image.size
-                        logging.debug(f"Image size: {width}x{height}")
-                        image = image.resize((width, height), Image.LANCZOS)
+                        # Get dimensions of the main frame
+                        frame_width = self.main_frame.winfo_width()
+                        frame_height = self.main_frame.winfo_height()
+                        # Calculate new dimensions while maintaining aspect ratio
+                        image_ratio = image.width / image.height
+                        new_height = int(frame_height * 1.0)  # 80% height
+                        new_width = int(new_height * image_ratio)
+                        if new_width > frame_width:
+                            new_width = frame_width
+                            new_height = int(new_width / image_ratio)
+                        image = image.resize((new_width, new_height), Image.LANCZOS)
                         photo = ImageTk.PhotoImage(image)
                         self.root.after(0, self.updateImages, photo, apod_info.get('explanation'))
                     except Exception as e:
@@ -141,6 +145,7 @@ class APODApp:
                     self.root.after(0, lambda: messagebox.showerror("Error", "Image file does not exist"))
             else:
                 self.root.after(0, lambda: messagebox.showerror("Error", "Failed to get image information"))
+
         except Exception as e:
             logging.error(f"Error loading images: {e}")
 
