@@ -15,7 +15,7 @@ class APODApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Astronomy Picture of the Day Viewer")
-        self.root.geometry("1000x800")
+        self.root.geometry("800x600")
         self.root.configure(bg="#f0f0f0")
 
         # Main Frame
@@ -31,8 +31,8 @@ class APODApp:
         self.explanation_text.grid(row=1, column=0, sticky="nsew")
 
         # Configure row and column weights
-        self.main_frame.grid_rowconfigure(0, weight=8)
-        self.main_frame.grid_rowconfigure(1, weight=2)
+        self.main_frame.grid_rowconfigure(0, weight=80)
+        self.main_frame.grid_rowconfigure(1, weight=20)
         self.main_frame.grid_columnconfigure(0, weight=1)
 
         # Bottom Section
@@ -48,7 +48,7 @@ class APODApp:
         self.image_combobox.bind("<<ComboboxSelected>>", self.selectimage)
 
         # Set Desktop Button
-        self.set_bg_button = tk.Button(self.bottom_section, text="Set as Desktop", command=self.set_as_desktop, font=("Arial", 12), bg="#4f5d52", fg="#4f5d52", relief="flat", padx=5, pady=5)
+        self.set_bg_button = tk.Button(self.bottom_section, text="Set as Desktop", command=self.set_as_desktop, font=("Arial", 12), bg="#4f5d52", fg="#f0f0f0", relief="flat", padx=5, pady=5)
         self.set_bg_button.pack(side=tk.LEFT, padx=5)
 
         self.select_date_label = tk.Label(self.bottom_section, text="Select Date:", bg="#4f5d52", font=("Arial", 12), fg="#f0f0f0")
@@ -58,7 +58,7 @@ class APODApp:
         self.date_selector = DateEntry(self.bottom_section, width=12, background='#4f5d52', foreground='#f0f0f0', borderwidth=2, font=("Arial", 12), date_pattern='yyyy-mm-dd')
         self.date_selector.pack(side=tk.LEFT, padx=5)
 
-        self.download_button = tk.Button(self.bottom_section, text="Download", command=self.downloadImage, font=("Arial", 12), bg="#4f5d52", fg="#4f5d52", relief="flat", padx=5, pady=5)
+        self.download_button = tk.Button(self.bottom_section, text="Download", command=self.downloadImage, font=("Arial", 12), bg="#4f5d52", fg="#f0f0f0", relief="flat", padx=5, pady=5)
         self.download_button.pack(side=tk.LEFT, padx=5)
 
         # Initially disable controls
