@@ -12,52 +12,44 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 class APODApp:
+
     def __init__(self, root):
+
         self.root = root
         self.root.title("Astronomy Picture of the Day Viewer")
-        self.root.geometry("800x600")
+        self.root.geometry("700x700")
         self.root.configure(bg="#f0f0f0")
 
-        # Main Frame
-        self.main_frame = tk.Frame(root, bg="#ffffff", padx=10, pady=10, bd=1, relief="solid")
-        self.main_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-
-        # Image Display
+        # Main Frame without border
+        self.main_frame = tk.Frame(root, bg="#ffffff", padx=5, pady=5)
+        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         self.image_label = tk.Label(self.main_frame, bg="#ffffff")
-        self.image_label.grid(row=0, column=0, sticky="nsew")
+        self.image_label.place(relx=0.5, y=5, anchor="n", width=400, height=500)  # Center horizontally
 
-        # Explanation Text
+        # Explanation Text using place for fixed position underneath the image
         self.explanation_text = tk.Text(self.main_frame, wrap=tk.WORD, font=("Arial", 12), bg="#ffffff", fg="#333333", highlightthickness=0, bd=0, padx=5, pady=5)
-        self.explanation_text.grid(row=1, column=0, sticky="nsew")
-
-        # Configure row and column weights
-        self.main_frame.grid_rowconfigure(0, weight=80)
-        self.main_frame.grid_rowconfigure(1, weight=20)
-        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.explanation_text.place(relx=0.5, y=420, anchor="n", width=650, height=150)  # Center horizontally
 
         # Bottom Section
-        self.bottom_section = tk.Frame(root, bg="#4f5d52", pady=10)
-        self.bottom_section.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+        self.bottom_section = tk.Frame(root, bg="#4f5d52", pady=2)
+        self.bottom_section.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=2)
 
         # Select Image Label and Combobox
         self.select_image_label = tk.Label(self.bottom_section, text="Select Image:", bg="#4f5d52", font=("Arial", 12), fg="#f0f0f0")
-        self.select_image_label.pack(side=tk.LEFT, padx=5)
-
+        self.select_image_label.pack(side=tk.LEFT, padx=2, pady=2)
         self.image_combobox = ttk.Combobox(self.bottom_section, font=("Arial", 12))
-        self.image_combobox.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        self.image_combobox.pack(side=tk.LEFT, padx=2, pady=2, fill=tk.X, expand=True)
         self.image_combobox.bind("<<ComboboxSelected>>", self.selectimage)
 
         # Set Desktop Button
         self.set_bg_button = tk.Button(self.bottom_section, text="Set as Desktop", command=self.set_as_desktop, font=("Arial", 12), bg="#4f5d52", fg="#f0f0f0", relief="flat", padx=5, pady=5)
-        self.set_bg_button.pack(side=tk.LEFT, padx=5)
-
+        self.set_bg_button.pack(side=tk.LEFT, padx=2)
         self.select_date_label = tk.Label(self.bottom_section, text="Select Date:", bg="#4f5d52", font=("Arial", 12), fg="#f0f0f0")
-        self.select_date_label.pack(side=tk.LEFT, padx=5)
+        self.select_date_label.pack(side=tk.LEFT, padx=2)
 
         # Date Entry and Download Button
         self.date_selector = DateEntry(self.bottom_section, width=12, background='#4f5d52', foreground='#f0f0f0', borderwidth=2, font=("Arial", 12), date_pattern='yyyy-mm-dd')
         self.date_selector.pack(side=tk.LEFT, padx=5)
-
         self.download_button = tk.Button(self.bottom_section, text="Download", command=self.downloadImage, font=("Arial", 12), bg="#4f5d52", fg="#f0f0f0", relief="flat", padx=5, pady=5)
         self.download_button.pack(side=tk.LEFT, padx=5)
 
@@ -117,7 +109,6 @@ class APODApp:
             self.root.after(0, self.listloadimages)
         else:
             self.root.after(0, lambda: messagebox.showerror("Error", " download failed"))
-
     def loadimages_display(self, title):
         try:
             apod_info = apod_desktop.get_apod_info_by_title(title)
@@ -148,18 +139,15 @@ class APODApp:
 
         except Exception as e:
             logging.error(f"Error loading images: {e}")
-
     def updateImages(self, photo, explanation):
         if photo:
             self.image_label.config(image=photo)
             self.image_label.image = photo
-
         if explanation:
             self.explanation_text.config(state=tk.NORMAL)
             self.explanation_text.delete(1.0, tk.END)
             self.explanation_text.insert(tk.END, explanation)
             self.explanation_text.config(state=tk.DISABLED)
-
     def set_as_desktop(self):
         current_title = self.image_combobox.get()
         if current_title:
