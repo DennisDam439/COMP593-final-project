@@ -12,7 +12,6 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 class APODApp:
-
     def __init__(self, root):
 
         self.root = root

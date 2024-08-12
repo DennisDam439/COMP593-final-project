@@ -1,13 +1,10 @@
 """
 COMP 593 - Final Project
-
 Description: 
   Downloads NASA's Astronomy Picture of the Day (APOD) from a specified date
   and sets it as the desktop background image.
-
 Usage:
   python apod_desktop.py [apod_date]
-
 Parameters:
   apod_date = APOD date (format: YYYY-MM-DD)
 """
@@ -41,7 +38,6 @@ def main():
 
 def get_apod_date():
     """Gets the APOD date from command line or defaults to today's date.
-
     Returns:
         date: APOD date
     """
@@ -85,10 +81,8 @@ def init_apod_cache():
 
 def add_apod_to_cache(apod_date):
     """Adds the APOD image from a specified date to the cache.
-
     Args:
         apod_date (date): Date of the APOD image
-
     Returns:
         int: Record ID of the APOD in the image cache DB
     """
@@ -129,7 +123,6 @@ def add_apod_to_db(title, explanation, file_path, sha256):
         explanation (str): Explanation of the APOD image
         file_path (str): Full path of the APOD image file
         sha256 (str): SHA-256 hash value of APOD image
-
     Returns:
         int: The ID of the newly inserted APOD record
     """
@@ -147,10 +140,8 @@ def add_apod_to_db(title, explanation, file_path, sha256):
 
 def get_apod_id_from_db(image_sha256):
     """Gets the record ID of the APOD in the cache with a specified SHA-256 hash.
-
     Args:
         image_sha256 (str): SHA-256 hash value of APOD image
-
     Returns:
         int: Record ID of the APOD in the image cache DB
     """
@@ -167,7 +158,6 @@ def determine_apod_file_path(image_title, image_url):
     Args:
         image_title (str): APOD title
         image_url (str): APOD image URL
-
     Returns:
         str: Full path at which the APOD image file must be saved
     """
@@ -179,10 +169,8 @@ def determine_apod_file_path(image_title, image_url):
 
 def get_file_extension(image_url):
     """Extracts the file extension from the image URL.
-
     Args:
         image_url (str): URL of the image
-
     Returns:
         str: File extension including the dot, e.g., '.jpg'
     """
@@ -193,10 +181,8 @@ def get_file_extension(image_url):
 
 def download_image(image_url):
     """Downloads an image from a specified URL.
-
     Args:
         image_url (str): URL of image
-
     Returns:
         bytes: Binary image data, if successful. None, if unsuccessful.
     """
@@ -210,11 +196,9 @@ def download_image(image_url):
 
 def save_image_file(image_data, file_path):
     """Saves image data as a file on disk.
-
     Args:
         image_data (bytes): Binary image data
         file_path (str): Full path where the image will be saved
-
     Returns:
         bool: True if the file was saved successfully, False otherwise
     """
@@ -227,16 +211,14 @@ def save_image_file(image_data, file_path):
         return False
 def resize_image(image_path, new_width, new_height):
     """Resizes the image to the specified dimensions."""
-    image = Image.open(image_path)
+    image = image.open(image_path)
     resized_image = image.resize((new_width, new_height), Image.LANCZOS)
     return ImageTk.PhotoImage(resized_image)
 
 def set_desktop_background_image(image_path):
     """Sets the desktop background image to a specific image.
-
     Args:
         image_path (str): Path of image file
-
     Returns:
         bool: True, if successful. False, if unsuccessful        
     """
@@ -257,7 +239,6 @@ def get_apod_info(image_id):
 
     Args:
         image_id (int): ID of APOD in the DB
-
     Returns:
         dict: Dictionary of APOD information
     """
@@ -274,10 +255,8 @@ def get_apod_info(image_id):
 
 def get_apod_info_by_title(title):
     """Gets the APOD information from the DB using the specified title.
-
     Args:
         title (str): Title of the APOD image
-
     Returns:
         dict: Dictionary of APOD information if found, otherwise None
     """
@@ -291,7 +270,6 @@ def get_apod_info_by_title(title):
         'explanation': result[1],
         'file_path': result[2]
     } if result else None
-
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -315,7 +293,7 @@ def load_data():
     # Select all relevant data from the cache
     cursor.execute("SELECT * FROM apod")  # Adjust the table name and columns as needed
     cached_data = cursor.fetchall()
-
+    
     conn.close()
     return cached_data
 

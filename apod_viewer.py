@@ -16,7 +16,6 @@ def main():
 
 def get_apod_date():
     """Gets the APOD date from command line or defaults to today's date.
-
     Returns:
         date: APOD date
     """
@@ -31,10 +30,8 @@ def get_apod_date():
 def get_apod_info(apod_date):
     """Gets information from the NASA API for the Astronomy 
     Picture of the Day (APOD) from a specified date.
-
     Args:
         apod_date (date): APOD date (Can also be a string formatted as YYYY-MM-DD)
-
     Returns:
         dict: Dictionary of APOD info, if successful. None if unsuccessful
     """
@@ -54,13 +51,10 @@ def get_apod_info(apod_date):
 
 def get_apod_image_url(apod_info_dict):
     """Gets the URL of the APOD image from the dictionary of APOD information.
-
     If the APOD is an image, gets the URL of the high definition image.
     If the APOD is a video, gets the URL of the video thumbnail.
-
     Args:
         apod_info_dict (dict): Dictionary of APOD info from API
-
     Returns:
         str: APOD image URL
     """

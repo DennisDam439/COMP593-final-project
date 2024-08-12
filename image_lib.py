@@ -1,14 +1,14 @@
 import os
 from datetime import date
 import sys
-import re
+import re 
 import requests
 import ctypes
 from apod_api import get_apod_info, get_apod_image_url
 
 def main():
     """Main function to handle command line execution and setting APOD as desktop background."""
-    apod_date = get_apod_date()
+    apod_date = get_apod_date() 
     apod_info = get_apod_info(apod_date)
     if apod_info:
         image_url = get_apod_image_url(apod_info)
@@ -32,13 +32,12 @@ def main():
     else:
         print("Failed to retrieve APOD info")
 
-def get_apod_date():
+def get_apod_date(): ##Retrives the Apod date provided as command line argument##
     """Gets the APOD date from command line or defaults to today's date.
-
     Returns:
         date: APOD date
     """
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 1: ##Check if date provided as command-line argument##
         try:
             return date.fromisoformat(sys.argv[1])
         except ValueError:
@@ -46,12 +45,10 @@ def get_apod_date():
             sys.exit(1)
     return date.today()
 
-def download_image(image_url):
+def download_image(image_url): ##Fetching image from URL using the requests_lib##
     """Downloads an image from a specified URL.
-
     Args:
         image_url (str): URL of image
-
     Returns:
         bytes: Binary image data, if successful. None, if unsuccessful.
     """
@@ -63,22 +60,19 @@ def download_image(image_url):
         print(f"An error occurred while downloading the image: {e}")
         return None
 
-def save_image_file(image_data, image_title, image_url):
+def save_image_file(image_data, image_title, image_url): ##Saving the image##
     """Saves image data as a file on disk with the title as filename.
-
     Args:
         image_data (bytes): Binary image data
         image_title (str): Title of the image, used as filename
         image_url (str): URL of the image, used to determine the file extension
-
     Returns:
         str: Full path of the saved image file if successful, None if unsuccessful
     """
-    image_path = './images/'
+    image_path = './images/' ##Creating the filepath##
     file_extension = get_file_extension(image_url)
-    file_name = re.sub(r'[\\/*?:"<>|]', '', image_title)  # Clean filename
+    file_name = re.sub(r'[\\/*?:"<>|]', '', image_title)  # Clean filename to avoid illegal charateers##
     file_path = os.path.join(image_path, f"{file_name}{file_extension}")
-    
     try:
         if not os.path.exists(image_path):
             os.makedirs(image_path)
@@ -89,29 +83,26 @@ def save_image_file(image_data, image_title, image_url):
         print(f"An error occurred while saving the image: {e}")
         return None
 
-def get_file_extension(image_url):
+def get_file_extension(image_url):##Getting file extension and detting defaults to jpg##
     """Extracts the file extension from the image URL.
-
     Args:
         image_url (str): URL of the image
-
     Returns:
         str: File extension including the dot, e.g., '.jpg'
     """
     _, ext = os.path.splitext(image_url)
     if not ext:
-        ext = '.jpg'  # Default extension if none found
+        ext = '.jpg'  
     return ext
 
-def set_desktop_background_image(image_path):
+def set_desktop_background_image(image_path): ## with cyptes to call API function  "SystemParametersInfoW" 
+    ## to change the desktopwallper##
     """Sets the desktop background image to a specific image.
-
     Args:
         image_path (str): Path of image file
-
     Returns:
         bool: True, if successful. False, if unsuccessful        
-    """
+      """
     try:
         if os.name == 'nt':
             SPI_SETDESKWALLPAPER = 20

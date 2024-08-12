@@ -4,7 +4,7 @@ API_KEY = 'QzFwm92OcOTymgJhWVpzYSLOM37TmiJ6letWC9LE'  # Replace with your NASA A
 BASE_URL = 'https://api.nasa.gov/planetary/apod'
 
 def main():
-    # Example usage
+    # Example usage / Specifying  date and retrieving APOD information for date 
     apod_date = '2024-01-06'
     apod_info = get_apod_info(apod_date)
     if apod_info:
@@ -14,7 +14,7 @@ def main():
     else:
         print('Failed to retrieve APOD info')
 
-def get_apod_info(apod_date=None, start_date=None, end_date=None, count=None):
+def get_apod_info(apod_date=None, start_date=None, end_date=None, count=None): ##Queries the APOD API for information based on the parameters provided##
     """Gets information from the NASA API for the Astronomy 
     Picture of the Day (APOD) from a specified date or date range or random images.
 
@@ -48,7 +48,7 @@ def get_apod_info(apod_date=None, start_date=None, end_date=None, count=None):
         print(f"An error occurred: {e}")
         return None
 
-def get_apod_image_url(apod_info_dict):
+def get_apod_image_url(apod_info_dict): ## Extrating the image from the APOD image from response dictionary  ##
     """Gets the URL of the APOD image from the dictionary of APOD information.
 
     If the APOD is an image, gets the URL of the high definition image.
@@ -72,3 +72,6 @@ def get_apod_image_url(apod_info_dict):
 
 if __name__ == '__main__':
     main()
+
+
+
