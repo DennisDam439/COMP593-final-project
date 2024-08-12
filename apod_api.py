@@ -42,7 +42,7 @@ def get_apod_info(apod_date=None, start_date=None, end_date=None, count=None): #
     
     try:
         response = requests.get(BASE_URL, params=params)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        response.raise_for_status()  # Raise an HTTPError for bad responses
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
