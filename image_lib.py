@@ -83,7 +83,7 @@ def save_image_file(image_data, image_title, image_url): ##Saving the image##
         print(f"An error occurred while saving the image: {e}")
         return None
 
-def get_file_extension(image_url):##Getting file extension and detting defaults to jpg##
+def get_file_extension(image_url):##Getting file extension and setting defaults to jpg##
     """Extracts the file extension from the image URL.
     Args:
         image_url (str): URL of the image
@@ -95,7 +95,7 @@ def get_file_extension(image_url):##Getting file extension and detting defaults 
         ext = '.jpg'  
     return ext
 
-def set_desktop_background_image(image_path): ## with cyptes to call API function  "SystemParametersInfoW" 
+def set_desktop_background_image(image_path): ## with ctyptes to call API function  "SystemParametersInfoW" 
     ## to change the desktopwallper##
     """Sets the desktop background image to a specific image.
     Args:

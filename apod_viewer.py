@@ -1,3 +1,4 @@
+
 import requests
 from apod_api import get_apod_info, get_apod_image_url, API_KEY, BASE_URL
 from datetime import date
@@ -7,6 +8,7 @@ def main():
     """Main function to handle command line execution and display APOD info."""
     apod_date = get_apod_date()
     apod_info = get_apod_info(apod_date)
+
     if apod_info:
         print(apod_info)
         image_url = get_apod_image_url(apod_info)
@@ -14,7 +16,7 @@ def main():
     else:
         print('Failed to retrieve APOD info')
 
-def get_apod_date():
+def get_apod_date(): ##check if date provided via CMD if not not defaults to current date ##
     """Gets the APOD date from command line or defaults to today's date.
     Returns:
         date: APOD date
@@ -27,7 +29,7 @@ def get_apod_date():
             sys.exit(1)
     return date.today()
 
-def get_apod_info(apod_date):
+def get_apod_info(apod_date): ##Requesting NASA API using provided or defualts##
     """Gets information from the NASA API for the Astronomy 
     Picture of the Day (APOD) from a specified date.
     Args:
@@ -49,7 +51,7 @@ def get_apod_info(apod_date):
         print(f"Error: {response.status_code}")
         return None
 
-def get_apod_image_url(apod_info_dict):
+def get_apod_image_url(apod_info_dict): ##examining the type of file ## Extracting image URL
     """Gets the URL of the APOD image from the dictionary of APOD information.
     If the APOD is an image, gets the URL of the high definition image.
     If the APOD is a video, gets the URL of the video thumbnail.

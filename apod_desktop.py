@@ -293,7 +293,7 @@ def load_data():
     # Select all relevant data from the cache
     cursor.execute("SELECT * FROM apod")  # Adjust the table name and columns as needed
     cached_data = cursor.fetchall()
-    
+
     conn.close()
     return cached_data
 
