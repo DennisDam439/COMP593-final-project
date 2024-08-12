@@ -11,7 +11,6 @@ Usage:
 Parameters:
   apod_date = APOD date (format: YYYY-MM-DD)
 """
-
 from datetime import date
 import sys
 import os
@@ -22,7 +21,6 @@ import requests
 import ctypes
 import apod_api
 import logging
-
 
 # Full paths of the image cache folder and database
 script_dir = os.path.dirname(os.path.abspath(__file__))
