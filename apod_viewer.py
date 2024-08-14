@@ -1,4 +1,3 @@
-
 import requests
 from apod_api import get_apod_info, get_apod_image_url, API_KEY, BASE_URL
 from datetime import date
@@ -8,7 +7,6 @@ def main():
     """Main function to handle command line execution and display APOD info."""
     apod_date = get_apod_date()
     apod_info = get_apod_info(apod_date)
-
     if apod_info:
         print(apod_info)
         image_url = get_apod_image_url(apod_info)
@@ -16,24 +14,37 @@ def main():
     else:
         print('Failed to retrieve APOD info')
 
-def get_apod_date(): ##check if date provided via CMD if not not defaults to current date ##
+def get_apod_date():
     """Gets the APOD date from command line or defaults to today's date.
+
     Returns:
         date: APOD date
     """
+    first_apod_date = date(1995, 6, 16)  # The date of the first APOD
+    today_date = date.today()
+
     if len(sys.argv) > 1:
         try:
-            return date.fromisoformat(sys.argv[1])
+            apod_date = date.fromisoformat(sys.argv[1])
+            if apod_date < first_apod_date:
+                print(f"Error: Date cannot be before {first_apod_date}.")
+                sys.exit(1)
+            elif apod_date > today_date:
+                print(f"Error: Cannot be today's date or in the future")
+                sys.exit(1)
+            return apod_date
         except ValueError:
-            print("Error: Invalid date format. Please use YYYY-MM-DD.")
+            print("Error: Date format should be Please use YYYY-MM-DD.")
             sys.exit(1)
-    return date.today()
+    return today_date
 
-def get_apod_info(apod_date): ##Requesting NASA API using provided or defualts##
+def get_apod_info(apod_date):
     """Gets information from the NASA API for the Astronomy 
     Picture of the Day (APOD) from a specified date.
+
     Args:
         apod_date (date): APOD date (Can also be a string formatted as YYYY-MM-DD)
+
     Returns:
         dict: Dictionary of APOD info, if successful. None if unsuccessful
     """
@@ -51,12 +62,15 @@ def get_apod_info(apod_date): ##Requesting NASA API using provided or defualts##
         print(f"Error: {response.status_code}")
         return None
 
-def get_apod_image_url(apod_info_dict): ##examining the type of file ## Extracting image URL
+def get_apod_image_url(apod_info_dict):
     """Gets the URL of the APOD image from the dictionary of APOD information.
+
     If the APOD is an image, gets the URL of the high definition image.
     If the APOD is a video, gets the URL of the video thumbnail.
+
     Args:
         apod_info_dict (dict): Dictionary of APOD info from API
+
     Returns:
         str: APOD image URL
     """

@@ -1,25 +1,30 @@
 """
 COMP 593 - Final Project
+
 Description: 
   Downloads NASA's Astronomy Picture of the Day (APOD) from a specified date
   and sets it as the desktop background image.
+
 Usage:
   python apod_desktop.py [apod_date]
+
 Parameters:
   apod_date = APOD date (format: YYYY-MM-DD)
 """
+
 from datetime import date
 import sys
 import os
 import re
 import hashlib
 import sqlite3
+from tkinter import Image
 import requests
 import ctypes
 import apod_api
 import logging
 
-# Full paths of the image cache folder and database
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 image_cache_dir = os.path.join(script_dir, 'images')
 image_cache_db = os.path.join(image_cache_dir, 'image_cache.db')
@@ -32,22 +37,33 @@ def main():
     apod_info = get_apod_info(apod_id)
 
     if apod_id != 0 and apod_info:
-        set_desktop_background_image(apod_info['file_path'])
+        set_as_desktop(apod_info['file_path'])
     else:
-        print("Error: Unable to set APOD as desktop background.")
+        print("Error: Unable to set as desktop background.")
 
 def get_apod_date():
     """Gets the APOD date from command line or defaults to today's date.
+
     Returns:
         date: APOD date
     """
+    first_apod_date = date(1995, 6, 16)  
+    today_date = date.today()
+
     if len(sys.argv) > 1:
         try:
-            return date.fromisoformat(sys.argv[1])
+            apod_date = date.fromisoformat(sys.argv[1])
+            if apod_date < first_apod_date:
+                print(f"Error: Date cannot be before {first_apod_date}.")
+                sys.exit(1)
+            elif apod_date > today_date:
+                print(f"Error: Cannot be future date")
+                sys.exit(1)
+            return apod_date
         except ValueError:
-            print("Error: Invalid date format. Please use YYYY-MM-DD.")
+            print("Error: Date format should be Please use YYYY-MM-DD.")
             sys.exit(1)
-    return date.today()
+    return today_date
 
 def init_apod_cache():
     """Initializes the image cache directory and database."""
@@ -73,16 +89,18 @@ def init_apod_cache():
             ''')
             conn.commit()
             conn.close()
-            print("Database and table created successfully.")
+            print("Database created successfully.")
         except sqlite3.Error as e:
             print(f"Error creating database: {e}")
     else:
-        print(f"Database already exists at: {image_cache_db}")
+        print(f"Database exists at: {image_cache_db}")
 
 def add_apod_to_cache(apod_date):
     """Adds the APOD image from a specified date to the cache.
+
     Args:
         apod_date (date): Date of the APOD image
+
     Returns:
         int: Record ID of the APOD in the image cache DB
     """
@@ -105,7 +123,7 @@ def add_apod_to_cache(apod_date):
         return 0
 
     image_sha256 = hashlib.sha256(image_data).hexdigest()
-    apod_id = get_apod_id_from_db(image_sha256)
+    apod_id = get_id_from(image_sha256)
     if apod_id != 0:
         return apod_id
 
@@ -123,6 +141,7 @@ def add_apod_to_db(title, explanation, file_path, sha256):
         explanation (str): Explanation of the APOD image
         file_path (str): Full path of the APOD image file
         sha256 (str): SHA-256 hash value of APOD image
+
     Returns:
         int: The ID of the newly inserted APOD record
     """
@@ -138,10 +157,12 @@ def add_apod_to_db(title, explanation, file_path, sha256):
     print(f"Added APOD to DB with ID: {apod_id}")
     return apod_id
 
-def get_apod_id_from_db(image_sha256):
+def get_id_from(image_sha256):
     """Gets the record ID of the APOD in the cache with a specified SHA-256 hash.
+
     Args:
         image_sha256 (str): SHA-256 hash value of APOD image
+
     Returns:
         int: Record ID of the APOD in the image cache DB
     """
@@ -158,31 +179,36 @@ def determine_apod_file_path(image_title, image_url):
     Args:
         image_title (str): APOD title
         image_url (str): APOD image URL
+
     Returns:
         str: Full path at which the APOD image file must be saved
     """
     image_path = image_cache_dir
     file_extension = get_file_extension(image_url)
-    file_name = re.sub(r'[\\/*?:"<>|]', '', image_title)  # Clean filename
+    file_name = re.sub(r'[\\/*?:"<>|]', '', image_title) 
     file_path = os.path.join(image_path, f"{file_name}{file_extension}")
     return file_path
 
 def get_file_extension(image_url):
     """Extracts the file extension from the image URL.
+
     Args:
         image_url (str): URL of the image
+
     Returns:
         str: File extension including the dot, e.g., '.jpg'
     """
     _, ext = os.path.splitext(image_url)
     if not ext:
-        ext = '.jpg'  # Default extension if none found
+        ext = '.jpg' 
     return ext
 
 def download_image(image_url):
     """Downloads an image from a specified URL.
+
     Args:
         image_url (str): URL of image
+
     Returns:
         bytes: Binary image data, if successful. None, if unsuccessful.
     """
@@ -191,14 +217,16 @@ def download_image(image_url):
         response.raise_for_status()
         return response.content
     except requests.RequestException as e:
-        print(f"An error occurred while downloading the image: {e}")
+        print(f"An error occurred while downloading image: {e}")
         return None
 
 def save_image_file(image_data, file_path):
     """Saves image data as a file on disk.
+
     Args:
         image_data (bytes): Binary image data
         file_path (str): Full path where the image will be saved
+
     Returns:
         bool: True if the file was saved successfully, False otherwise
     """
@@ -207,18 +235,20 @@ def save_image_file(image_data, file_path):
             file.write(image_data)
         return True
     except IOError as e:
-        print(f"An error occurred while saving the image: {e}")
+        print(f"An error occurred while saving image: {e}")
         return False
 def resize_image(image_path, new_width, new_height):
     """Resizes the image to the specified dimensions."""
-    image = image.open(image_path)
+    image = Image.open(image_path)
     resized_image = image.resize((new_width, new_height), Image.LANCZOS)
     return ImageTk.PhotoImage(resized_image)
 
-def set_desktop_background_image(image_path):
+def set_as_desktop(image_path):
     """Sets the desktop background image to a specific image.
+
     Args:
         image_path (str): Path of image file
+
     Returns:
         bool: True, if successful. False, if unsuccessful        
     """
@@ -228,7 +258,7 @@ def set_desktop_background_image(image_path):
             ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image_path, 3)
             return True
         else:
-            print("Setting desktop background is not supported on this OS")
+            print("Setting desktop background is not supported")
             return False
     except Exception as e:
         print(f"An error occurred while setting the desktop background: {e}")
@@ -239,6 +269,7 @@ def get_apod_info(image_id):
 
     Args:
         image_id (int): ID of APOD in the DB
+
     Returns:
         dict: Dictionary of APOD information
     """
@@ -253,10 +284,12 @@ def get_apod_info(image_id):
         'file_path': result[2]
     } if result else None
 
-def get_apod_info_by_title(title):
+def get_by_title(title):
     """Gets the APOD information from the DB using the specified title.
+
     Args:
         title (str): Title of the APOD image
+
     Returns:
         dict: Dictionary of APOD information if found, otherwise None
     """
@@ -271,6 +304,7 @@ def get_apod_info_by_title(title):
         'file_path': result[2]
     } if result else None
 
+
 logging.basicConfig(level=logging.DEBUG)
 
 def get_all_apod_titles():
@@ -281,7 +315,7 @@ def get_all_apod_titles():
         titles = [row[0] for row in cursor.fetchall()]
         logging.debug(f"Retrieved titles: {titles}")
     except Exception as e:
-        logging.error(f"Error executing SQL query: {e}")
+        logging.error(f"Error executing query: {e}")
     finally:
         conn.close()
     return titles
@@ -291,7 +325,7 @@ def load_data():
     cursor = conn.cursor()
 
     # Select all relevant data from the cache
-    cursor.execute("SELECT * FROM apod")  # Adjust the table name and columns as needed
+    cursor.execute("SELECT * FROM apod") 
     cached_data = cursor.fetchall()
 
     conn.close()
